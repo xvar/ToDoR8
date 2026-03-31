@@ -1,5 +1,6 @@
 package com.github.xvar.todo
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -49,8 +50,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -74,13 +75,17 @@ data class TodoItem(
     val isDone: Boolean = false
 )
 
-class MainActivity : ComponentActivity() {
+@SuppressLint("Instantiatable")
+class MainActivity(
+    private val repository: TodoRepository
+) : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             TodoTheme {
-                TodoScreen()
+                TodoScreen(repository)
             }
         }
     }
@@ -88,8 +93,8 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoScreen() {
-    val todos = remember { mutableStateListOf<TodoItem>() }
+fun TodoScreen(repository: TodoRepository) {
+    val todos by repository.todos.collectAsState()
     var showAddSheet by remember { mutableStateOf(false) }
     val doneCount = todos.count { it.isDone }
 
@@ -144,7 +149,6 @@ fun TodoScreen() {
             }
 
             if (todos.isEmpty()) {
-                // Empty state
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -173,15 +177,8 @@ fun TodoScreen() {
                     items(todos, key = { it.id }) { todo ->
                         TodoCard(
                             todo = todo,
-                            onToggle = { toggled ->
-                                val index = todos.indexOfFirst { it.id == toggled.id }
-                                if (index != -1) {
-                                    todos[index] = toggled.copy(isDone = !toggled.isDone)
-                                }
-                            },
-                            onDelete = { deleted ->
-                                todos.removeAll { it.id == deleted.id }
-                            }
+                            onToggle = { repository.toggle(it.id) },
+                            onDelete = { repository.delete(it.id) }
                         )
                     }
                     item {
@@ -195,7 +192,7 @@ fun TodoScreen() {
             AddTodoSheet(
                 onDismiss = { showAddSheet = false },
                 onAdd = { text ->
-                    todos.add(0, TodoItem(text = text))
+                    repository.add(text)
                     showAddSheet = false
                 }
             )
@@ -370,6 +367,6 @@ fun AddTodoSheet(
 @Composable
 fun TodoScreenPreview() {
     TodoTheme {
-        TodoScreen()
+        TodoScreen(TodoRepository())
     }
 }
