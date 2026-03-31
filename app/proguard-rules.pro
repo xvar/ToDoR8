@@ -12,7 +12,7 @@
 #   public *;
 #}
 
--keep class * { *;}
+-keepclassmembers class * { *;}
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
