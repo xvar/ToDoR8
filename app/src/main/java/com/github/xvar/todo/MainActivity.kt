@@ -1,6 +1,5 @@
 package com.github.xvar.todo
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -75,7 +74,6 @@ data class TodoItem(
     val isDone: Boolean = false
 )
 
-@SuppressLint("Instantiatable")
 class MainActivity(
     private val repository: TodoRepository
 ) : ComponentActivity() {

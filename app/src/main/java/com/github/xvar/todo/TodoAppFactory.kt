@@ -19,7 +19,7 @@ class TodoAppFactory : AppComponentFactory() {
         className: String,
         intent: Intent?
     ): Activity {
-        if (className == MainActivity::class.java.name) {
+        if (className == ActivityStub::class.java.name) {
             return MainActivity(app.todoRepository)
         }
         return super.instantiateActivityCompat(cl, className, intent)
