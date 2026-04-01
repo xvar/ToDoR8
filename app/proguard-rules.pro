@@ -71,3 +71,4 @@
 
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
+-whyareyoukeeping class com.github.xvar.todo.TodoAppFactory
