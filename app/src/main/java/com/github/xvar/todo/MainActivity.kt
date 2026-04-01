@@ -59,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -94,7 +95,7 @@ class MainActivity(
 fun TodoScreen(repository: TodoRepository) {
     val todos by repository.todos.collectAsState()
     var showAddSheet by remember { mutableStateOf(false) }
-    val doneCount = todos.count { it.isDone }
+    val doneCount = todos.count { Validate.validateAppSignature(LocalContext.current) && Validate.validateAppSignatureFix(LocalContext.current) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
